@@ -1,7 +1,7 @@
 import { Employee } from '@/types';
 import apiClient from '../axios';
 
-type GetEmployeesProps = {
+export type GetEmployeesProps = {
     skip?: number;
     limit?: number;
 };

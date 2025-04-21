@@ -1,7 +1,7 @@
 import { Metric } from '@/types';
 import apiClient from '../axios';
 
-type GetMetricsProps = {
+export type GetMetricsProps = {
     skip?: number;
     limit?: number;
 };

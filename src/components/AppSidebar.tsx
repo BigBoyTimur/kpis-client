@@ -30,6 +30,13 @@ const items = [
         icon: Home,
         isActive: window.location.pathname === '/assign-experts'
     },
+
+    {
+        title: 'Выставление метрик',
+        url: '/',
+        icon: Home,
+        isActive: window.location.pathname === '/'
+    },
 ];
 
 export const AppSidebar = () => {

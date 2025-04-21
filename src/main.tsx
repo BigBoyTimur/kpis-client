@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { AppDefaultRouterProvider } from '@/providers/AppDefaultRouterProvider';
+import { TanStackQueryProvider } from './providers/TanStackQueryProvider';
 
 
 
@@ -9,6 +10,8 @@ import { AppDefaultRouterProvider } from '@/providers/AppDefaultRouterProvider';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <AppDefaultRouterProvider/>
+        <TanStackQueryProvider>
+            <AppDefaultRouterProvider/>
+        </TanStackQueryProvider>
     </StrictMode>,
 );

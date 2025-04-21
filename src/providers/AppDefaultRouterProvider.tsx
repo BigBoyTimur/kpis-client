@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/AppLayout';
 import { SummaryTable } from '@/pages/SummaryTable';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { AssignExperts } from '@/pages/AssignExperts';
+import { SetMetrics } from '@/pages/SetMetrics';
 
 const placeholder = () => <div>placeholder</div>;
 
@@ -13,7 +14,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                Component: placeholder
+                Component: SetMetrics
             },
             {
                 path: 'summary-table',

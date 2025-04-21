@@ -1,13 +1,13 @@
 import { Department } from '@/types';
 import apiClient from '../axios';
 
-type GetMetricsProps = {
+export type GetDepartmentsProps = {
     skip?: number;
     limit?: number;
 };
 
 export const facultyAndDepartment = {
-    getDepartments: async ({ skip = 0, limit = 100 }: GetMetricsProps): Promise<Department[]> => {
+    getDepartments: async ({ skip = 0, limit = 100 }: GetDepartmentsProps): Promise<Department[]> => {
         const response = await apiClient.get('/faculty_and_department/departments', {
             params: {
                 skip,
