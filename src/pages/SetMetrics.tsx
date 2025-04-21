@@ -63,14 +63,14 @@ export const SetMetrics = () => {
                 </SelectContent>
             </Select>
             <div className="overflow-x-auto max-h-[calc(100vh-50px)] max-w-[calc(100vw-20rem)]">
-                <table className="border-collapse border border-gray-200">
-                    <thead className="sticky top-0">
+                <table className="border-collapse border border-gray-300">
+                    <thead>
                         <tr>
-                            <th className="border border-gray-300 p-2">Кафедра \ Метрика</th>
+                            <th className="sticky top-0 left-0 border border-gray-300 p-2 z-100 bg-gray-300">Кафедра \ Метрика</th>
                             {metrics?.map(metric => (
                                 <th
                                     key={metric.metric_id}
-                                    className="border border-gray-300 p-2 sticky bg-gray-50 min-w-70 whitespace-normal"
+                                    className="p-2 sticky top-0 bg-gray-50 min-w-70 whitespace-normal border border-gray-300"
                                 >
                                     {`${ metric.metric_number}${metric.metric_subnumber ?? ''} ${metric.description}`}
                                 </th>
@@ -80,7 +80,7 @@ export const SetMetrics = () => {
                     <tbody>
                         {departments?.map(department => (
                             <tr key={department.id}>
-                                <td className="border border-gray-300 p-2 font-medium sticky left-0 bg-gray-50">
+                                <td className="border border-gray-300 p-2 font-medium sticky left-0 bg-gray-50 ">
                                     {department.nameOfDepartment}
                                 </td>
                                 {metrics?.map(metric => {
