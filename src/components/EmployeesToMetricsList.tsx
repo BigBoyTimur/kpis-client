@@ -2,7 +2,7 @@ type EnrichedEmployeesToMetrics = {
     employeeName: string;
     metrics: { metric_number: number; description: string; metric_subnumber: string; }[];
     quarter: number;
-    value: number[];
+    year: number;
 };
 
 type EmployeesToMetricsListProps = {

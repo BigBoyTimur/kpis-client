@@ -33,5 +33,7 @@ export type EmployeesToMetrics = {
     employee_id: number;
     metrics_id: number[];
     quarter: number;
-    value: number[];
+    date_start: Date;
+    date_end: Date;
+    year: number;
 };

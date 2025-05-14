@@ -6,6 +6,12 @@ type GetTableProps = {
     quarter?: number;
 }
 
+type SaveTableProps = {
+    departmentId: number;
+    metricId: number;
+    score: number;
+}[]
+
 export const kpi = {
     getTable: async ({ employeeId, year, quarter }: GetTableProps) => {
         const response = await apiClient.get('/kpi/table', {
@@ -15,6 +21,11 @@ export const kpi = {
                 quarter
             }
         });
+        return response.data;
+    },
+    saveTable: async (data: SaveTableProps) => {
+        console.log(data);
+        const response = await apiClient.post<SaveTableProps>('/kpi/table', data);
         return response.data;
     }
 };

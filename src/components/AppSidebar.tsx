@@ -32,7 +32,7 @@ const items = [
     },
 
     {
-        title: 'Выставление метрик',
+        title: 'Выставление показателей',
         url: '/',
         icon: Home,
         isActive: window.location.pathname === '/'

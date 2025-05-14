@@ -31,6 +31,7 @@ type AssignExpertsForm = {
         metric_id: number; // ID метрики
         metric_number: number; // Номер метрики
         metric_subnumber: string; // Подномер метрики
+        metric_description: string;
         isSelected: boolean; // Выбрана ли метрика
     }[];
 };
@@ -60,7 +61,8 @@ export const AssignExpertsForm = ({ onSuccess }: AssignExpertsFormProps) => {
             employee_id: data.expert,
             metrics_id: selectedMetrics.map((metric) => metric.metric_id),
             quarter: data.quarter,
-            value: Array(selectedMetrics.length).fill(1),
+            date_start: new Date(),
+            date_end: new Date(),
             year: data.year,
         };
 
@@ -83,6 +85,7 @@ export const AssignExpertsForm = ({ onSuccess }: AssignExpertsFormProps) => {
                     metric_id: metric.metric_id,
                     metric_number: metric.metric_number,
                     metric_subnumber: metric.metric_subnumber,
+                    metric_description: metric.description,
                     isSelected: false,
                 });
             });
@@ -199,7 +202,7 @@ export const AssignExpertsForm = ({ onSuccess }: AssignExpertsFormProps) => {
                                     )}
                                 />
                                 <span>
-                                    {field.metric_number}{field.metric_subnumber}
+                                    {field.metric_number}{field.metric_subnumber} - {field.metric_description}
                                 </span>
                             </div>
                         ))}

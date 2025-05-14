@@ -2,8 +2,9 @@ import { useGetKpiTable } from '@/hooks/useGetKpiTable';
 import { Department, Metric } from '@/types';
 import { useGetDepartments } from '@/hooks/useGetDepartments';
 import { useGetMetrics } from '@/hooks/useGetMetrics';
+import { kpi } from '@/api/endpoints/kpi'
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useGetEmployees } from '@/hooks/useGetEmployees';
 
@@ -17,7 +18,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-type TableData = {
+export type TableData = {
     department: Department;
     metric: Omit<Metric, 'metric_id'> & { id: number };
     score: number
@@ -36,7 +37,12 @@ export const SetMetrics = () => {
 
     const { data: departments } = useGetDepartments();
 
-    const { data: metrics } = useGetMetrics();
+    const { data: metrics } = {
+        data: kpiTableData.map((item) => ({
+            ...item.metric,
+            metric_id: item.metric.id,
+        })),
+    };
 
     const dataMap = useMemo(() => {
         const map = new Map<string, number>();
@@ -49,8 +55,20 @@ export const SetMetrics = () => {
 
     const onEmployeeChange = (value: string) => setEmployee(+value);
 
+    const [scoreMap, setScoreMap] = useState<Map<string, number>>(new Map());
+
+    useEffect(() => {
+        const map = new Map<string, number>();
+        kpiTableData.forEach(item => {
+            const key = `${item.department.id}-${item.metric.id}`;
+            map.set(key, item.score);
+        });
+        setScoreMap(map);
+    }, [kpiTableData]);    
+
     return (
         <div className='flex flex-col gap-5 items-center'>
+            <h1 className='font-medium'>Эксперт</h1>
             <Select defaultValue='1' onValueChange={ value => onEmployeeChange(value) }>
                 <SelectTrigger className="w-[300px]">
                     <SelectValue placeholder="Выберите сотрудника" />
@@ -66,13 +84,13 @@ export const SetMetrics = () => {
                 <table className="border-collapse border border-gray-300">
                     <thead>
                         <tr>
-                            <th className="sticky top-0 left-0 border border-gray-300 p-2 z-100 bg-gray-300">Кафедра \ Метрика</th>
+                            <th className="sticky top-0 left-0 border border-gray-300 p-1 z-100 bg-gray-300">Кафедра \ Показатель</th>
                             {metrics?.map(metric => (
                                 <th
                                     key={metric.metric_id}
                                     className="p-2 sticky top-0 bg-gray-50 min-w-70 whitespace-normal border border-gray-300"
                                 >
-                                    {`${ metric.metric_number}${metric.metric_subnumber ?? ''} ${metric.description}`}
+                                    {`${ metric.metric_number ?? ''}${metric.metric_subnumber ?? ''} ${metric.description}`}
                                 </th>
                             ))}
                         </tr>
@@ -85,13 +103,21 @@ export const SetMetrics = () => {
                                 </td>
                                 {metrics?.map(metric => {
                                     const key = `${department.id}-${metric.metric_id}`;
-                                    const score = dataMap.get(key);
                                     return (
-                                        <td
-                                            key={metric.metric_id}
-                                            className="border border-gray-300 p-2 text-center"
-                                        >
-                                            {score ?? 'нет значения'}
+                                        <td key={metric.metric_id} className="border border-gray-300 p-2 text-center">
+                                            <input
+                                                type="number"
+                                                value={scoreMap.get(key) ?? ''}
+                                                onChange={(e) => {
+                                                    const value = e.target.value === '' ? 0 : Number(e.target.value);
+                                                    setScoreMap(prev => {
+                                                        const updated = new Map(prev);
+                                                        updated.set(key, value);
+                                                        return updated;
+                                                    });
+                                                }}
+                                                className="w-16 text-center border border-gray-300 rounded"
+                                            />
                                         </td>
                                     );
                                 })}
@@ -100,7 +126,19 @@ export const SetMetrics = () => {
                     </tbody>
                 </table>
             </div>
-            <Button className='p-7 w-100 text-lg'>Сохранить изменения</Button>
+            <Button
+                className='p-7 w-100 text-lg'
+                onClick={() => {
+                    const updatedData = Array.from(scoreMap.entries()).map(([key, score]) => {
+                        const [departmentId, metricId] = key.split('-').map(Number);
+                        return { departmentId, metricId, score };
+                    });
+                    console.log(updatedData);
+                    kpi.saveTable(updatedData);
+                }}
+            >
+                Сохранить изменения
+            </Button>
         </div>
     );
 };
