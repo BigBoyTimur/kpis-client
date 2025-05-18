@@ -4,6 +4,7 @@ import { SummaryTable } from '@/pages/SummaryTable';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { AssignExperts } from '@/pages/AssignExperts';
 import { SetMetrics } from '@/pages/SetMetrics';
+import Auth from '@/pages/auth';
 
 const placeholder = () => <div>placeholder</div>;
 
@@ -23,7 +24,8 @@ const router = createBrowserRouter([
             {
                 path: 'assign-experts',
                 Component: AssignExperts
-            }
+            },
+            
         ],
         // children: [
         //     {
@@ -36,6 +38,10 @@ const router = createBrowserRouter([
         //     },
         // ],
     },
+    {
+        path: 'auth',
+        Component: Auth
+    }
 ]);
 
 export const AppDefaultRouterProvider =  () => (<RouterProvider router={router}/>);
