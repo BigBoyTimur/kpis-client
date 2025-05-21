@@ -18,7 +18,7 @@ type TableData = {
   departments: Department[];
 };
 
-function App() {
+function App() { 
     // const [ tableData, setTableData ] = useState<TableData>({
     //     metrics: [],
     //     departments: [],

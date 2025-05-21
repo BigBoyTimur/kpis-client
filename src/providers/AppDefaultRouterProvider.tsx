@@ -3,7 +3,9 @@ import { AppLayout } from '@/components/AppLayout';
 import { SummaryTable } from '@/pages/SummaryTable';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { AssignExperts } from '@/pages/AssignExperts';
+import { MetricsPage } from "@/pages/MetricsPage";
 import { SetMetrics } from '@/pages/SetMetrics';
+import { EmployeesPage } from '@/pages/EmployeesPage';
 import Auth from '@/pages/auth';
 
 const placeholder = () => <div>placeholder</div>;
@@ -24,6 +26,14 @@ const router = createBrowserRouter([
             {
                 path: 'assign-experts',
                 Component: AssignExperts
+            },
+            {
+                path: 'metrics',
+                Component: MetricsPage
+            },
+            {
+                path: 'employees',
+                Component: EmployeesPage 
             },
             
         ],
