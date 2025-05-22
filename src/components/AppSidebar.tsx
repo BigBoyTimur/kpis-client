@@ -39,6 +39,12 @@ const items = [
         icon: Users,
         isActive: window.location.pathname === '/employees'
     },
+    {
+        title: 'Сроки выставления метрик',
+        url: '/employee-periods',
+        icon: Calendar,
+        isActive: window.location.pathname === '/employee-periods',
+    },
 ];
 
 export const AppSidebar = () => {
