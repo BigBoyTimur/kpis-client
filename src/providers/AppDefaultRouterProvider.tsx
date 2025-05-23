@@ -8,6 +8,10 @@ import { SetMetrics } from '@/pages/SetMetrics';
 import { EmployeesPage } from '@/pages/EmployeesPage';
 import Auth from '@/pages/Auth';
 import { EmployeePeriods } from '@/pages/EmployeePeriods';
+import { EmployeesToDepartments } from '@/pages/EmployeesToDepartments';
+
+
+
 
 const placeholder = () => <div>placeholder</div>;
 
@@ -39,6 +43,10 @@ const router = createBrowserRouter([
             {
                 path: 'employee-periods',         
                 Component: EmployeePeriods,       
+            },
+            {
+                path: 'employee-departments',         
+                Component: EmployeesToDepartments     
             },
             
         ],

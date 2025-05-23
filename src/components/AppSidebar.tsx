@@ -45,6 +45,12 @@ const items = [
         icon: Calendar,
         isActive: window.location.pathname === '/employee-periods',
     },
+    {
+        title: 'Заведующие кафедрами',
+        url: '/employee-departments',
+        icon: Calendar,
+        isActive: window.location.pathname === '/employee-departments',
+    },
 ];
 
 export const AppSidebar = () => {
