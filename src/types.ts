@@ -41,3 +41,19 @@ export type EmployeesToMetrics = {
     date_end: Date;
     year: number;
 };
+
+// types.ts
+export interface DepartmentHead {
+  department_id: number; // Added: Essential for linking heads to departments
+  employee_id: number;
+  jobtitle: 'заведующий кафедры' | 'ВРиО' | 'ИО';
+  year: number;
+  month: number;
+  count_day: number;
+  quarter: number;
+  first_name: string;
+  last_name: string;
+  surname: string;
+  department_name?: string; // Optional, if provided by API
+  faculty_name?: string; // Optional, if provided by API
+}

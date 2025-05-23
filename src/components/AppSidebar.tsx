@@ -45,6 +45,18 @@ const items = [
         icon: Search,
         isActive: window.location.pathname === '/employeesScores'
     },
+    {
+        title: 'Сроки выставления метрик',
+        url: '/employee-periods',
+        icon: Calendar,
+        isActive: window.location.pathname === '/employee-periods',
+    },
+    {
+        title: 'Заведующие кафедрами',
+        url: '/employee-departments',
+        icon: Calendar,
+        isActive: window.location.pathname === '/employee-departments',
+    },
 ];
 
 export const AppSidebar = () => {
