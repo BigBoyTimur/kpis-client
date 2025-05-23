@@ -6,7 +6,8 @@ import { AssignExperts } from '@/pages/AssignExperts';
 import { MetricsPage } from "@/pages/MetricsPage";
 import { SetMetrics } from '@/pages/SetMetrics';
 import { EmployeesPage } from '@/pages/EmployeesPage';
-import Auth from '@/pages/auth';
+import Auth from '@/pages/Auth';
+import { EmployeesMetricsTable } from '@/pages/EmployeesToScores';
 
 const placeholder = () => <div>placeholder</div>;
 
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: 'employees',
                 Component: EmployeesPage 
+            },
+            {
+                path: 'employeesScores',
+                Component: EmployeesMetricsTable 
             },
             
         ],

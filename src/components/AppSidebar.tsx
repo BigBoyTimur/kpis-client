@@ -39,6 +39,12 @@ const items = [
         icon: Users,
         isActive: window.location.pathname === '/employees'
     },
+    {
+        title: 'Показатели сотрудников',
+        url: '/employeesScores',
+        icon: Search,
+        isActive: window.location.pathname === '/employeesScores'
+    },
 ];
 
 export const AppSidebar = () => {
