@@ -183,7 +183,7 @@ export const AssignExpertsForm = ({ onSuccess }: AssignExpertsFormProps) => {
                     </div>
 
                     {/* Список чекбоксов для выбора метрик */}
-                    <FormLabel>Метрики</FormLabel>
+                    <FormLabel>Показатели</FormLabel>
                     <div className="h-64 overflow-y-auto border p-4 rounded-md">
                         {fields.map((field, index) => (
                             <div key={field.id} className="flex items-center space-x-4 mb-4">

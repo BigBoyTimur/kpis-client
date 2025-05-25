@@ -41,7 +41,7 @@ export const MetricsPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Просмотр метрик</h1>
+      <h1 className="text-2xl font-bold mb-4">Просмотр показателей</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300">
           <thead>
