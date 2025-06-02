@@ -27,7 +27,7 @@ const navItems = [
   { title: 'Просмотр показателей',             url: '/metrics',            icon: BarChart },
   { title: 'Сотрудники',                       url: '/employees',          icon: Users },
   { title: 'Показатели сотрудников',           url: '/employeesScores',    icon: Search },
-  { title: 'Сроки выставления \n показателей',    url: '/employee-periods',   icon: Calendar },
+  { title: 'Сроки выставления показателей',    url: '/employee-periods',   icon: Calendar },
   { title: 'Заведующие кафедрами',             url: '/employee-departments', icon: PersonStanding },
 ];
 
