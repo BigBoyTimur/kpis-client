@@ -1,6 +1,8 @@
 import { useGetMetrics } from "@/hooks/useGetMetrics";
 import { Metric } from "@/types";
 import { useMemo } from "react";
+import { Button } from '@/components/ui/button';
+import apiClient from "@/api/axios";
 
 interface SectionHeader {
   section_id: number;
@@ -36,12 +38,34 @@ export const MetricsPage: React.FC = () => {
     return result;
   }, [metrics]);
 
+  const downloadTable = async () => {
+    try {
+      const response = await apiClient.get('/table_maker/metrics', {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'metrics.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Ошибка при скачивании таблицы:', error);
+    }
+  };
+
   if (isLoading) return <div>Загрузка...</div>;
   if (error) return <div>Ошибка загрузки метрик: {error.message}</div>;
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Просмотр показателей</h1>
+      <div className="w-full">
+                  <Button type="button" onClick={downloadTable} className="w-full">
+                      Скачать документ
+                  </Button>
+                </div>
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300">
           <thead>
