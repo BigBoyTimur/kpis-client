@@ -17,11 +17,11 @@ import {
   BriefcaseBusiness,
   BarChart,
   Users,
+  Building2, // Добавлен новый иконок для кафедр
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-
   { title: 'Назначение экспертов',             url: '/assign-experts',     icon: Inbox },
   { title: 'Выставление показателей',         url: '/',                  icon: BriefcaseBusiness },
   { title: 'Просмотр показателей',             url: '/metrics',            icon: BarChart },
@@ -29,6 +29,8 @@ const navItems = [
   { title: 'Показатели сотрудников',           url: '/employeesScores',    icon: Search },
   { title: 'Сроки выставления показателей',    url: '/employee-periods',   icon: Calendar },
   { title: 'Заведующие кафедрами',             url: '/employee-departments', icon: PersonStanding },
+  // Измененная строка для показателей кафедр
+  { title: 'Показатели кафедр',                url: '/departments-metrics', icon: Building2 },
 ];
 
 export const AppSidebar = () => {
