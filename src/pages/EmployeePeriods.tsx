@@ -1,6 +1,4 @@
-// src/pages/EmployeePeriods.tsx
 import React, { useState, useEffect } from 'react';
-// Заменили импорт:
 import apiClient from '@/api/axios';
 import { useGetEmployees } from '@/hooks/useGetEmployees';
 import { Button } from '@/components/ui/button';
@@ -27,23 +25,29 @@ type Rec = {
 export const EmployeePeriods: React.FC = () => {
   const { data: employees } = useGetEmployees();
 
-  const [employeeId, setEmployeeId] = useState<number|undefined>(undefined);
+  const [employeeId, setEmployeeId] = useState<number | undefined>(undefined);
   const [records, setRecords] = useState<Rec[]>([]);
   const [year, setYear] = useState<number>(new Date().getFullYear());
-  const [quarter, setQuarter] = useState<number>(Math.floor(new Date().getMonth()/3) + 1);
+  const [quarter, setQuarter] = useState<number>(Math.floor(new Date().getMonth() / 3) + 1);
   const [dateStart, setDateStart] = useState<string>('');
   const [dateEnd, setDateEnd] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
 
-  // Автовыбор первого сотрудника
+  const [bulkYear, setBulkYear] = useState<number>(new Date().getFullYear());
+  const [bulkQuarter, setBulkQuarter] = useState<number>(Math.floor(new Date().getMonth() / 3) + 1);
+  const [bulkStart, setBulkStart] = useState<string>('');
+  const [bulkEnd, setBulkEnd] = useState<string>('');
+  const [bulkSaving, setBulkSaving] = useState<boolean>(false);
+
+  const [allRecords, setAllRecords] = useState<Rec[]>([]);
+
   useEffect(() => {
     if (employees?.length && employeeId == null) {
       setEmployeeId(employees[0].employee_id);
     }
   }, [employees, employeeId]);
 
-  // Подгружаем записи
   useEffect(() => {
     if (employeeId == null) return;
     setLoading(true);
@@ -55,11 +59,11 @@ export const EmployeePeriods: React.FC = () => {
         if (mine[0]) {
           setYear(mine[0].year);
           setQuarter(mine[0].quarter);
-          setDateStart(mine[0].date_start.slice(0,10));
-          setDateEnd(mine[0].date_end.slice(0,10));
+          setDateStart(mine[0].date_start.slice(0, 10));
+          setDateEnd(mine[0].date_end.slice(0, 10));
         } else {
           setYear(new Date().getFullYear());
-          setQuarter(Math.floor(new Date().getMonth()/3) + 1);
+          setQuarter(Math.floor(new Date().getMonth() / 3) + 1);
           setDateStart('');
           setDateEnd('');
         }
@@ -68,21 +72,25 @@ export const EmployeePeriods: React.FC = () => {
       .finally(() => setLoading(false));
   }, [employeeId]);
 
-  // Сохранение
+  useEffect(() => {
+    apiClient
+      .get<Rec[]>('/employees-to-metrics/?skip=0&limit=1000')
+      .then(res => setAllRecords(res.data))
+      .catch(console.error);
+  }, []);
+
   const onSave = async () => {
     if (employeeId == null) return alert('Выберите сотрудника');
     if (!dateStart || !dateEnd) return alert('Заполните даты');
     setSaving(true);
-
     const payload = {
       employee_id: employeeId,
       metrics_id: records[0]?.metrics_id ?? [],
       year,
       quarter,
       date_start: new Date(dateStart).toISOString(),
-      date_end:   new Date(dateEnd).toISOString(),
+      date_end: new Date(dateEnd).toISOString(),
     };
-
     try {
       if (records[0]) {
         await apiClient.put(`/employees-to-metrics/${records[0].id}`, payload);
@@ -90,8 +98,6 @@ export const EmployeePeriods: React.FC = () => {
         await apiClient.post('/employees-to-metrics/', payload);
       }
       alert('Сохранено');
-
-      // Обновляем
       const res = await apiClient.get<Rec[]>('/employees-to-metrics/?skip=0&limit=100');
       setRecords(res.data.filter(r => r.employee_id === employeeId));
     } catch (err: any) {
@@ -102,11 +108,100 @@ export const EmployeePeriods: React.FC = () => {
     }
   };
 
+  const onBulkSave = async () => {
+    if (!bulkStart || !bulkEnd) return alert('Заполните даты');
+    setBulkSaving(true);
+    try {
+      const res = await apiClient.get<Rec[]>('/employees-to-metrics/?skip=0&limit=1000');
+      const all = res.data;
+
+      for (const emp of employees || []) {
+        const existing = all.find(r => r.employee_id === emp.employee_id);
+        const payload = {
+          employee_id: emp.employee_id,
+          metrics_id: existing?.metrics_id ?? [],
+          year: bulkYear,
+          quarter: bulkQuarter,
+          date_start: new Date(bulkStart).toISOString(),
+          date_end: new Date(bulkEnd).toISOString(),
+        };
+        if (existing) {
+          await apiClient.put(`/employees-to-metrics/${existing.id}`, payload);
+        } else {
+          await apiClient.post('/employees-to-metrics/', payload);
+        }
+      }
+
+      alert('Периоды установлены всем сотрудникам');
+      const updated = await apiClient.get<Rec[]>('/employees-to-metrics/?skip=0&limit=1000');
+      setAllRecords(updated.data);
+    } catch (err: any) {
+      console.error(err);
+      alert('Ошибка при сохранении: ' + (err.response?.data?.detail || err.message));
+    } finally {
+      setBulkSaving(false);
+    }
+  };
+
   const current = records[0];
 
-  return (
-    <div className="flex flex-col gap-5 items-center p-6">
-      <h1 className="text-2xl font-medium">Периоды по сотруднику</h1>
+  
+    return (
+  <div className="flex flex-col gap-8 items-center p-6">
+    <h1 className="text-2xl font-medium">Периоды по сотруднику</h1>
+
+    {/* 🔷 Блок: Массовое назначение */}
+    <div className="w-full max-w-4xl border rounded-lg p-4 shadow-sm">
+      <h2 className="text-xl font-semibold mb-4">Назначить период всем сотрудникам</h2>
+      <div className="flex flex-wrap gap-4 items-center">
+        <label>
+          Год:&nbsp;
+          <input
+            type="number"
+            value={bulkYear}
+            onChange={e => setBulkYear(+e.target.value)}
+            className="w-20 border rounded px-2 py-1"
+          />
+        </label>
+        <label>
+          Квартал:&nbsp;
+          <select
+            value={bulkQuarter}
+            onChange={e => setBulkQuarter(+e.target.value)}
+            className="border rounded px-2 py-1"
+          >
+            {[1, 2, 3, 4].map(q => (
+              <option key={q} value={q}>{q}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Дата начала:&nbsp;
+          <input
+            type="date"
+            value={bulkStart}
+            onChange={e => setBulkStart(e.target.value)}
+            className="border rounded px-2 py-1"
+          />
+        </label>
+        <label>
+          Дата окончания:&nbsp;
+          <input
+            type="date"
+            value={bulkEnd}
+            onChange={e => setBulkEnd(e.target.value)}
+            className="border rounded px-2 py-1"
+          />
+        </label>
+        <Button onClick={onBulkSave} disabled={bulkSaving}>
+          {bulkSaving ? 'Сохраняем…' : 'Сохранить всем'}
+        </Button>
+      </div>
+    </div>
+
+    {/* 🔷 Блок: Индивидуальное редактирование */}
+    <div className="w-full max-w-4xl border rounded-lg p-4 shadow-sm">
+      <h2 className="text-xl font-semibold mb-4">Редактировать период одного сотрудника</h2>
 
       <Select
         value={employeeId?.toString()}
@@ -128,19 +223,21 @@ export const EmployeePeriods: React.FC = () => {
       </Select>
 
       {loading ? (
-        <div>Загрузка…</div>
+        <div className="mt-4">Загрузка…</div>
       ) : (
         <>
-          {current ? (
-            <div className="text-gray-700">
-              <strong>Текущий период:</strong>{' '}
-              {current.date_start.slice(0,10)} — {current.date_end.slice(0,10)}
-            </div>
-          ) : (
-            <div className="text-gray-700">Текущий период не задан</div>
-          )}
+          <div className="mt-4 text-gray-700">
+            {current ? (
+              <>
+                <strong>Текущий период:</strong>{' '}
+                {current.date_start.slice(0, 10)} — {current.date_end.slice(0, 10)}
+              </>
+            ) : (
+              'Текущий период не задан'
+            )}
+          </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 mt-4">
             <div className="flex gap-4">
               <label>
                 Год:&nbsp;
@@ -158,7 +255,7 @@ export const EmployeePeriods: React.FC = () => {
                   onChange={e => setQuarter(+e.target.value)}
                   className="border rounded px-2 py-1"
                 >
-                  {[1,2,3,4].map(q => (
+                  {[1, 2, 3, 4].map(q => (
                     <option key={q} value={q}>{q}</option>
                   ))}
                 </select>
@@ -184,17 +281,50 @@ export const EmployeePeriods: React.FC = () => {
                 />
               </label>
             </div>
+            <Button
+              onClick={onSave}
+              disabled={saving}
+              className="w-40 mt-2 text-lg"
+            >
+              {saving ? 'Сохраняем…' : 'Сохранить'}
+            </Button>
           </div>
-
-          <Button
-            onClick={onSave}
-            disabled={saving}
-            className="w-40 mt-4 text-lg"
-          >
-            {saving ? 'Сохраняем…' : 'Сохранить'}
-          </Button>
         </>
       )}
     </div>
-  );
+
+    {/* 🔷 Блок: Таблица */}
+    <div className="w-full max-w-4xl">
+      <h2 className="text-xl font-semibold mt-4">Периоды всех сотрудников</h2>
+      <table className="w-full border mt-2 text-sm">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border px-2 py-1 text-left">ФИО</th>
+            <th className="border px-2 py-1">Год</th>
+            <th className="border px-2 py-1">Квартал</th>
+            <th className="border px-2 py-1">Начало</th>
+            <th className="border px-2 py-1">Окончание</th>
+          </tr>
+        </thead>
+        <tbody>
+          {employees?.map(emp => {
+            const rec = allRecords.find(r => r.employee_id === emp.employee_id);
+            return (
+              <tr key={emp.employee_id}>
+                <td className="border px-2 py-1">
+                  {emp.last_name} {emp.first_name} {emp.surname}
+                </td>
+                <td className="border px-2 py-1 text-center">{rec?.year ?? '—'}</td>
+                <td className="border px-2 py-1 text-center">{rec?.quarter ?? '—'}</td>
+                <td className="border px-2 py-1 text-center">{rec?.date_start?.slice(0, 10) ?? '—'}</td>
+                <td className="border px-2 py-1 text-center">{rec?.date_end?.slice(0, 10) ?? '—'}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
 };
